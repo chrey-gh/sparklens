@@ -1,23 +1,15 @@
-import sbt._
-
 name := "sparklens"
 organization := "com.qubole"
 
 scalaVersion := "2.12.17"
-version := "0.5.0"
 
-// Define the custom keys
-val spName = settingKey[String]("The name of the Spark application")
-val sparkVersion = settingKey[String]("The Version of the Spark Runtime")
-val spAppendScalaVersion = settingKey[Boolean]("Flag to append Scala version")
+crossScalaVersions := Seq("2.10.6", "2.11.8")
 
-// Assign values to the custom keys
 spName := "qubole/sparklens"
-sparkVersion := "3.0.0"
-spAppendScalaVersion := true
 
-// Set the name of the output assembly
-assemblyJarName in assembly := s"${name.value}-${version.value}-scala-${scalaVersion.value}.jar"
+sparkVersion := "2.0.0"
+
+spAppendScalaVersion := true
 
 
 libraryDependencies += "org.apache.spark" %% "spark-core" % sparkVersion.value % "provided"
@@ -28,12 +20,12 @@ libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.6" % "p
 
 libraryDependencies += "org.apache.httpcomponents" % "httpmime" % "4.5.6" % "provided"
 
-
 test in assembly := {}
 
 testOptions in Test += Tests.Argument("-oF")
 
-scalacOptions ++= Seq("-target:jvm-11")
+scalacOptions ++= Seq("-target:jvm-1.7")
+
 javacOptions ++= Seq("-source", "11", "-target", "11")
 
 publishMavenStyle := true

@@ -245,6 +245,21 @@ class QuboleJobListener(sparkConf: SparkConf)  extends SparkListener {
     }
   }
 
+
+
+  // Function to get attemptId using reflection (if necessary)
+  def getAttemptId(stageInfo: StageInfo): Int = {
+    try {
+      val method = classOf[StageInfo].getDeclaredMethod("attemptId")
+      method.setAccessible(true)
+      method.invoke(stageInfo).asInstanceOf[Int]
+    } catch {
+      case _: NoSuchMethodException =>
+        // Handle the case where attemptId is not available
+        -1 // or some default value or alternative logic
+    }
+  }
+
   override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
     val stageTimeSpan = stageMap(stageCompleted.stageInfo.stageId)
     if (stageCompleted.stageInfo.completionTime.isDefined) {
@@ -257,7 +272,7 @@ class QuboleJobListener(sparkConf: SparkConf)  extends SparkListener {
     if (stageCompleted.stageInfo.failureReason.isDefined) {
       //stage failed
       val si = stageCompleted.stageInfo
-      failedStages += s""" Stage ${si.stageId} attempt ${si.attemptId} in job ${stageIDToJobID(si.stageId)} failed.
+      failedStages += s""" Stage ${si.stageId} attempt ${getAttemptId(si)} in job ${stageIDToJobID(si.stageId)} failed.
                       Stage tasks: ${si.numTasks}
                       """
       stageTimeSpan.finalUpdate()
