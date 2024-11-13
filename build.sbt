@@ -28,6 +28,8 @@ libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.6" % "p
 
 libraryDependencies += "org.apache.httpcomponents" % "httpmime" % "4.5.6" % "provided"
 
+libraryDependencies += "org.json4s" %% "json4s-native" % "3.6.7"
+
 
 test in assembly := {}
 
